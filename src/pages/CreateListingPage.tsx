@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
   Upload, 
   X, 
@@ -8,11 +8,16 @@ import {
   DollarSign,
   FileText,
   Image as ImageIcon,
-  Tag
+  Tag,
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import Layout from '@/components/layout/Layout';
 import { categories, cities } from '@/data/mockData';
+import { subscriptionService } from '@/lib/services';
+import { useToast } from '@/hooks/use-toast';
 import {
   Select,
   SelectContent,
@@ -22,8 +27,58 @@ import {
 } from '@/components/ui/select';
 
 const CreateListingPage = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [images, setImages] = useState<string[]>([]);
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(true);
+  const [canCreate, setCanCreate] = useState(false);
+  const [usage, setUsage] = useState<{
+    active_listings: number;
+    max_listings: number;
+    highlighted_listings: number;
+    max_highlighted: number;
+    plan: {
+      name: string;
+      ads_limit: number;
+      highlighted: number;
+    };
+  } | null>(null);
+
+  useEffect(() => {
+    checkLimits();
+  }, [checkLimits]);
+
+  const checkLimits = useCallback(async () => {
+    try {
+      const response = await subscriptionService.getStatus();
+      if (response.success) {
+        const { usage, plan } = response.data;
+        setUsage({ ...usage, plan });
+        
+        // Verificar se pode criar anúncio
+        const canCreateNew = plan.ads_limit === -1 || usage.active_listings < usage.max_listings;
+        setCanCreate(canCreateNew);
+
+        if (!canCreateNew) {
+          toast({
+            variant: 'destructive',
+            title: 'Limite atingido',
+            description: `Você já tem ${usage.active_listings} anúncios ativos. Faça upgrade para criar mais.`,
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao verificar limites:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Erro',
+        description: 'Não foi possível verificar os limites do seu plano',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [toast, navigate]);
 
   const addImage = () => {
     // Simular upload de imagem
@@ -35,8 +90,65 @@ const CreateListingPage = () => {
     setImages(images.filter((_, i) => i !== index));
   };
 
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-16 flex justify-center items-center min-h-[60vh]">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
+
+  if (!canCreate) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-16 max-w-3xl">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Limite de anúncios atingido</AlertTitle>
+            <AlertDescription className="mt-2">
+              <p className="mb-4">
+                Você já tem {usage?.active_listings || 0} anúncios ativos, o que é o limite do seu plano {usage?.plan?.name || ''}.
+              </p>
+              <div className="flex gap-4">
+                <Button asChild>
+                  <Link to="/planos">Fazer Upgrade</Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link to="/dashboard">Voltar ao Dashboard</Link>
+                </Button>
+              </div>
+            </AlertDescription>
+          </Alert>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
+      {/* Alert de Uso */}
+      {usage && (
+        <div className="bg-muted border-b border-border py-3">
+          <div className="container mx-auto px-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">
+                Anúncios: {usage.active_listings}/{usage.plan.ads_limit === -1 ? '∞' : usage.plan.ads_limit}
+                {usage.plan.highlighted > 0 && (
+                  <span className="ml-4">
+                    Destaques disponíveis: {usage.plan.highlighted - usage.highlighted_listings}
+                  </span>
+                )}
+              </span>
+              <Button variant="link" size="sm" asChild>
+                <Link to="/planos">Ver Planos</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Breadcrumb */}
       <div className="bg-card border-b border-border py-3">
         <div className="container mx-auto px-4">

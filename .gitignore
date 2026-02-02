@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files (comentado pois repositório é privado)
+# .env
+# .env.development
+# .env.production

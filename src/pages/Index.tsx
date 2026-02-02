@@ -10,59 +10,64 @@ const Index = () => {
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="hero-gradient text-primary-foreground py-16 md:py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAyNHYySDI0di0yaDEyek0zNiAxNHYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30"></div>
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        {/* Background com imagem de fundo e overlay */}
+        <div className="absolute inset-0 z-0">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'url("https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=600&fit=crop")',
+              backgroundPosition: 'center',
+              filter: 'brightness(0.4)'
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/70 via-blue-600/60 to-primary/70" />
+        </div>
         
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-3xl mx-auto text-center mb-10">
-            <h1 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-4 animate-slide-up">
+          <div className="max-w-3xl mx-auto text-center mb-12">
+            <h1 className="font-display font-bold text-3xl md:text-4xl lg:text-5xl mb-6 animate-slide-up text-white drop-shadow-xl leading-tight whitespace-nowrap">
               Encontre o que você procura
             </h1>
-            <p className="text-lg md:text-xl text-primary-foreground/80 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+            <p className="text-lg md:text-xl text-white/95 animate-slide-up font-semibold drop-shadow-lg" style={{ animationDelay: '0.1s' }}>
               O maior portal de classificados do Brasil. Compre, venda e anuncie de forma rápida e segura.
             </p>
           </div>
 
-          {/* Search Box */}
-          <div className="search-container max-w-4xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <input
-                  type="text"
-                  placeholder="O que você está procurando?"
-                  className="input-styled pl-12 text-foreground"
-                />
+          {/* Search Box - visual moderno */}
+          <div className="relative max-w-3xl mx-auto animate-slide-up" style={{ animationDelay: '0.2s' }}>
+            <div className="bg-gradient-to-br from-primary/90 to-blue-500/80 rounded-2xl shadow-xl px-8 py-8 flex flex-col items-center gap-6 relative overflow-hidden">
+              <form className="w-full flex flex-col md:flex-row gap-4 relative z-10">
+                <div className="flex-1 relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary" />
+                  <input
+                    type="text"
+                    placeholder="O que você está procurando?"
+                    className="w-full h-14 pl-12 pr-4 rounded-xl border-none shadow focus:ring-4 focus:ring-primary/30 text-base"
+                    style={{background: 'rgba(255,255,255,0.95)'}}
+                  />
+                </div>
+                <Button className="h-14 px-8 rounded-xl bg-primary hover:bg-primary/90 text-white font-bold text-lg shadow">
+                  <Search className="w-6 h-6 mr-2" />
+                  Buscar
+                </Button>
+              </form>
+              {/* Popular Searches */}
+              <div className="mt-2 flex flex-wrap gap-2 justify-center">
+                <span className="text-sm text-white/80">Populares:</span>
+                {['Apartamentos', 'Carros', 'iPhone', 'Empregos', 'Móveis'].map((term) => (
+                  <Link
+                    key={term}
+                    to={`/busca?q=${term.toLowerCase()}`}
+                    className="text-sm text-white font-semibold hover:underline hover:text-yellow-200 transition"
+                  >
+                    {term}
+                  </Link>
+                ))}
               </div>
-              <div className="md:w-64 relative">
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <select className="input-styled pl-12 text-foreground appearance-none">
-                  <option>Todas as cidades</option>
-                  {cities.map((city) => (
-                    <option key={city.id} value={city.slug}>
-                      {city.name}, {city.state}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <Button className="btn-secondary h-12 px-8">
-                <Search className="w-5 h-5 mr-2" />
-                Buscar
-              </Button>
-            </div>
-
-            {/* Popular Searches */}
-            <div className="mt-4 flex flex-wrap gap-2 justify-center">
-              <span className="text-sm text-muted-foreground">Populares:</span>
-              {['Apartamentos', 'Carros', 'iPhone', 'Empregos', 'Móveis'].map((term) => (
-                <Link
-                  key={term}
-                  to={`/busca?q=${term.toLowerCase()}`}
-                  className="text-sm text-primary hover:underline"
-                >
-                  {term}
-                </Link>
-              ))}
+              {/* Decorativo: círculos coloridos */}
+              <span className="absolute -top-8 -left-8 w-32 h-32 bg-white/10 rounded-full blur-2xl" />
+              <span className="absolute -bottom-10 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl" />
             </div>
           </div>
         </div>
@@ -135,25 +140,40 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 md:py-24 hero-gradient text-primary-foreground">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="font-display font-bold text-3xl md:text-4xl mb-4">
-            Tem algo para vender?
-          </h2>
-          <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-            Anuncie grátis e alcance milhares de compradores interessados. É rápido, fácil e seguro.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/anunciar">
-              <Button className="btn-secondary text-lg px-8 py-6">
-                Anunciar Grátis
-              </Button>
-            </Link>
-            <Link to="/planos">
-              <Button variant="outline" className="border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary text-lg px-8 py-6">
-                Conhecer Planos
-              </Button>
-            </Link>
+      <section className="relative py-20 md:py-32 overflow-hidden">
+        {/* Background com imagem */}
+        <div className="absolute inset-0 z-0">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'url("https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=1200&h=600&fit=crop")',
+              backgroundPosition: 'center',
+              filter: 'brightness(0.35)'
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/75 via-blue-600/65 to-primary/75" />
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="text-center">
+            <h2 className="font-display font-bold text-4xl md:text-5xl lg:text-6xl mb-6 text-white drop-shadow-xl">
+              Tem algo para vender?
+            </h2>
+            <p className="text-xl md:text-2xl text-white/95 mb-10 max-w-2xl mx-auto font-semibold drop-shadow-lg">
+              Anuncie grátis e alcance milhares de compradores interessados. É rápido, fácil e seguro.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/anunciar">
+                <Button className="btn-secondary text-lg px-10 py-7 font-bold rounded-lg shadow-lg hover:shadow-xl transition">
+                  Anunciar Grátis
+                </Button>
+              </Link>
+              <Link to="/planos">
+                <Button className="bg-white text-primary hover:bg-white/90 border-2 border-white text-lg px-10 py-7 font-bold rounded-lg shadow-lg hover:shadow-xl transition">
+                  Conhecer Planos
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
@@ -195,28 +215,6 @@ const Index = () => {
                 Crie seu anúncio em menos de 2 minutos e comece a vender.
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Cities Section */}
-      <section className="py-12 md:py-16 bg-muted">
-        <div className="container mx-auto px-4">
-          <h2 className="font-display font-bold text-2xl md:text-3xl text-foreground text-center mb-8">
-            Principais Cidades
-          </h2>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4">
-            {cities.map((city) => (
-              <Link
-                key={city.id}
-                to={`/cidade/${city.slug}`}
-                className="bg-card rounded-xl p-4 text-center hover:shadow-card-hover transition-all duration-300"
-              >
-                <p className="font-semibold text-foreground">{city.name}</p>
-                <p className="text-sm text-muted-foreground">{city.state}</p>
-              </Link>
-            ))}
           </div>
         </div>
       </section>

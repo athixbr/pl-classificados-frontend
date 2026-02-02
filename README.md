@@ -1,33 +1,194 @@
-# Welcome to your Lovable project
+# PL Classificados - Frontend
 
-## Project info
+Frontend da plataforma de classificados desenvolvido com React, TypeScript e Vite.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## 🚀 Tecnologias
 
-## How can I edit this code?
+- **React 18** com TypeScript
+- **Vite** - Build tool
+- **Tailwind CSS** - Estilização
+- **Radix UI** - Componentes acessíveis
+- **React Router DOM** - Roteamento
+- **Axios** - Cliente HTTP
+- **Lucide React** - Ícones
 
-There are several ways of editing your application.
+## 📦 Instalação
 
-**Use Lovable**
+```bash
+# Instalar dependências
+npm install
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+# Ou com bun
+bun install
+```
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🔧 Configuração
 
-**Use your preferred IDE**
+O projeto usa arquivos de ambiente para diferentes contextos:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- `.env` - Configuração base
+- `.env.development` - Desenvolvimento local
+- `.env.production` - Produção
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Variáveis de Ambiente
 
-Follow these steps:
+```env
+VITE_API_URL=http://seu-servidor:3003/api
+VITE_APP_NAME=PL Classificados
+VITE_APP_ENV=production
+```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## 🏃 Executando
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+### Desenvolvimento
+
+```bash
+npm run dev
+# ou
+bun dev
+```
+
+Acesse: http://localhost:8080
+
+### Build para Produção
+
+```bash
+npm run build
+# ou
+bun run build
+```
+
+Os arquivos otimizados estarão na pasta `dist/`
+
+### Preview da Build
+
+```bash
+npm run preview
+# ou
+bun preview
+```
+
+## 📁 Estrutura do Projeto
+
+```
+src/
+├── components/        # Componentes reutilizáveis
+│   ├── cards/        # Cards de categorias, listagens, planos
+│   ├── dashboard/    # Componentes do dashboard
+│   ├── layout/       # Header, Footer, Layout
+│   └── ui/           # Componentes UI (shadcn/ui)
+├── contexts/         # Contextos React (AuthContext)
+├── hooks/            # Custom hooks
+├── lib/              # Utilitários e serviços
+│   ├── api.ts       # Configuração do Axios
+│   ├── services.ts  # Serviços da API
+│   └── utils.ts     # Funções auxiliares
+├── pages/            # Páginas da aplicação
+│   ├── admin/       # Páginas do admin
+│   ├── agency/      # Páginas de agências
+│   └── dashboard/   # Dashboard do usuário
+└── App.tsx           # Componente principal com rotas
+```
+
+## 🌐 Deploy na VPS Ubuntu
+
+### 1. Build do Projeto
+
+```bash
+npm run build
+```
+
+### 2. Enviar para VPS
+
+```bash
+# Copiar build para servidor
+scp -r dist/* user@seu-servidor:/var/www/pl-classificados/
+```
+
+### 3. Configurar Nginx
+
+```nginx
+server {
+    listen 80;
+    server_name seu-dominio.com;
+    root /var/www/pl-classificados;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Proxy para API
+    location /api {
+        proxy_pass http://localhost:3003;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+### 4. Reiniciar Nginx
+
+```bash
+sudo systemctl restart nginx
+```
+
+## 📝 Funcionalidades
+
+- ✅ Sistema de autenticação (Login/Registro)
+- ✅ Dashboard de usuário com limites de anúncios
+- ✅ Criação e gerenciamento de anúncios
+- ✅ Sistema de planos e assinaturas (Mercado Pago)
+- ✅ Categorias e filtros
+- ✅ Upload de imagens (Digital Ocean Spaces)
+- ✅ Painel administrativo
+- ✅ Painel de agências
+- ✅ Responsivo (mobile-first)
+
+## 🔐 Autenticação
+
+O sistema usa JWT tokens armazenados no localStorage:
+
+```typescript
+// Login
+const response = await authService.login(email, password);
+localStorage.setItem('token', response.data.token);
+
+// Verificar autenticação
+const token = localStorage.getItem('token');
+if (token) {
+  // Usuário autenticado
+}
+```
+
+## 📊 Sistema de Planos
+
+Integração completa com Mercado Pago:
+
+1. Usuário seleciona plano após registro
+2. Plano gratuito: ativação imediata
+3. Planos pagos: redirecionamento para checkout MP
+4. Webhook atualiza status da assinatura
+5. Dashboard mostra limites e uso em tempo real
+
+## 🤝 Contribuindo
+
+1. Clone o repositório
+2. Crie uma branch: `git checkout -b feature/nova-funcionalidade`
+3. Commit suas mudanças: `git commit -m 'Adiciona nova funcionalidade'`
+4. Push para a branch: `git push origin feature/nova-funcionalidade`
+5. Abra um Pull Request
+
+## 📄 Licença
+
+Projeto privado - Todos os direitos reservados
+
+## 👨‍💻 Desenvolvedor
+
+Desenvolvido por Athix
 
 # Step 3: Install the necessary dependencies.
 npm i

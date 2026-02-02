@@ -326,7 +326,7 @@ export const currentUser: User = {
 export const adminUser: User = {
   id: 'admin',
   name: 'Administrador',
-  email: 'admin@plantaonoticias.com.br',
+  email: 'admin@plclassificados.com.br',
   avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
   type: 'admin',
   createdAt: '2024-01-01',
